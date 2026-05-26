@@ -10,6 +10,8 @@ local.properties
 xcuserdata
 .kotlin
 .firebender
+.superpowers/
+.claude/
 composeApp/build
 composeApp/google
 composeApp/fdroid

@@ -1,0 +1,22 @@
+# Stub — full implementation tracked in issue #66.
+# Will build the Mac app on a macos-14 runner and run Swift tests
+# once the macApp/ Xcode project exists.
+name: CI · Mac
+on:
+  pull_request:
+    paths:
+      - macApp/**
+      - composeApp/**
+  push:
+    branches: [master]
+    paths:
+      - macApp/**
+      - composeApp/**
+
+jobs:
+  build-test-mac:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - name: TODO — wire up build + test
+        run: echo "see issue #66"

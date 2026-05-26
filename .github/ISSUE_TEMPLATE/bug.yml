@@ -1,0 +1,38 @@
+name: Bug report
+description: Something is broken or behaves unexpectedly
+labels: ["bug"]
+body:
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What did you do, what did you expect, what did you see instead?
+      placeholder: I tapped Start on a Pomodoro and the timer immediately ended.
+    validations:
+      required: true
+  - type: input
+    id: platform
+    attributes:
+      label: Platform
+      description: Android / Mac / backend
+      placeholder: Android 14 (Pixel 7), app version 0.3.1
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open the app
+        2. Tap Deep Work label
+        3. Tap Start
+        4. Observe immediate session end
+    validations:
+      required: false
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs / stack trace (if available)
+      render: shell
+    validations:
+      required: false

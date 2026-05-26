@@ -1,0 +1,25 @@
+name: Task
+description: A unit of planned work that isn't a bug or a user-facing feature (refactor, infra, docs, etc.)
+labels: ["task"]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What
+      description: One-line description of the work.
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why
+      description: Why now? What does it unblock or improve?
+    validations:
+      required: false
+  - type: textarea
+    id: done-when
+    attributes:
+      label: Done when
+      description: How will you know this is finished?
+    validations:
+      required: false

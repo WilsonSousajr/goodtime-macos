@@ -1,0 +1,16 @@
+# Stub — full implementation tracked in issue #68.
+# Will build a release APK, sign it with the keystore (loaded from secrets),
+# and upload to GitHub Releases.
+name: Release · Android
+on:
+  push:
+    tags: ['v*.*.*-android']
+  workflow_dispatch:
+
+jobs:
+  build-apk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: TODO — build + sign + upload APK
+        run: echo "see issue #68"
