@@ -1,0 +1,21 @@
+name: Deploy · Backend
+on:
+  push:
+    tags: ['v*.*.*-backend']
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Coolify redeploy
+        env:
+          COOLIFY_DEPLOY_WEBHOOK: ${{ secrets.COOLIFY_DEPLOY_WEBHOOK }}
+          COOLIFY_API_TOKEN: ${{ secrets.COOLIFY_API_TOKEN }}
+        run: |
+          if [ -z "$COOLIFY_DEPLOY_WEBHOOK" ]; then
+            echo "COOLIFY_DEPLOY_WEBHOOK secret not set — see docs/ci-cd.md § 2"
+            exit 1
+          fi
+          curl -fsSL -X POST "$COOLIFY_DEPLOY_WEBHOOK" \
+            -H "Authorization: Bearer $COOLIFY_API_TOKEN"

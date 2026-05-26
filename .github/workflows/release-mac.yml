@@ -1,0 +1,16 @@
+# Stub — full implementation tracked in issue #69.
+# Will build a release .app, package as .dmg via create-dmg, optionally
+# notarize, and upload to GitHub Releases.
+name: Release · Mac
+on:
+  push:
+    tags: ['v*.*.*-mac']
+  workflow_dispatch:
+
+jobs:
+  build-dmg:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - name: TODO — build + package + upload .dmg
+        run: echo "see issue #69"
