@@ -42,7 +42,11 @@ subprojects {
          afterEvaluate {
              tasks.named("preBuild") {
                  dependsOn("spotlessApply")
-                 dependsOn("exportLibraryDefinitions")
+                 // exportLibraryDefinitions only exists where the aboutlibraries plugin is
+                 // applied (currently :composeApp). The :shared module has no such task.
+                 if (tasks.findByName("exportLibraryDefinitions") != null) {
+                     dependsOn("exportLibraryDefinitions")
+                 }
              }
          }
 
