@@ -12,6 +12,7 @@ All pipelines run on **GitHub Actions**. The existing CircleCI config is left as
 | `.github/workflows/release-android.yml` | Tag `v*.*.*-android` | Builds release APK, signs with keystore, uploads to GitHub Releases |
 | `.github/workflows/release-mac.yml` | Tag `v*.*.*-mac` | Builds release Mac `.app`, packages as `.dmg`, uploads to GitHub Releases |
 | `.github/workflows/deploy-backend.yml` | Tag `v*.*.*-backend` or manual `workflow_dispatch` | Hits Coolify deploy webhook to redeploy the Supabase service (which pulls latest migrations from this repo) |
+| `.github/workflows/project-board.yml` | `issues` (opened, reopened, transferred, labeled, unlabeled) | Adds the issue to Project #12 and sets its Status column: new issues → **Backlog**, `bug`-labeled → **Bugs**, `bug` removed → **Backlog**. Runs from the default branch, so it only takes effect once merged to `master`. |
 
 ## 2. Secrets needed
 
@@ -25,6 +26,7 @@ In repo Settings → Secrets and variables → Actions:
 - `MAC_NOTARY_API_KEY_ID` / `MAC_NOTARY_API_KEY` / `MAC_NOTARY_ISSUER_ID` (notarization, optional)
 - `COOLIFY_DEPLOY_WEBHOOK` — full webhook URL from Coolify → Supabase service → Webhooks → Deploy
 - `COOLIFY_API_TOKEN` — bearer token from Coolify → Profile → API Tokens (read+deploy scope is enough)
+- `PROJECT_PAT` — fine-grained PAT used by `project-board.yml`. The default `GITHUB_TOKEN` cannot write to **user-owned** Projects, so this is required. Create at GitHub → Settings → Developer settings → Fine-grained tokens, scoped to **only this repository**, with permissions **Issues: read** and **Projects: read and write**. (A classic PAT with the `project` scope also works.)
 
 ## 3. KMP CI workflow sketch
 

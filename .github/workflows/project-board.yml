@@ -1,0 +1,85 @@
+name: Project board routing
+
+# Routes repository issues onto GitHub Project #12 ("Goodtime macOS port"):
+#   - new issue            -> Backlog  (or Bugs, if opened already labeled "bug")
+#   - "bug" label added    -> Bugs
+#   - "bug" label removed  -> Backlog
+#
+# User-owned (non-org) Projects cannot be written by the default GITHUB_TOKEN, so
+# this needs a fine-grained PAT in the PROJECT_PAT secret (access: this repo;
+# permissions: Issues read, Projects read/write). See docs/ci-cd.md.
+#
+# The hard-coded IDs below belong to project #12 and its Status field; regenerate
+# them with `gh project field-list 12 --owner WilsonSousajr` if the project changes.
+
+on:
+  issues:
+    types: [opened, reopened, transferred, labeled, unlabeled]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: project-board-${{ github.event.issue.number }}
+  cancel-in-progress: false
+
+jobs:
+  route:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Add to board and set the Status column
+        env:
+          GH_TOKEN: ${{ secrets.PROJECT_PAT }}
+          PROJECT_ID: PVT_kwHOBTZlyM4BY2Vw
+          STATUS_FIELD_ID: PVTSSF_lAHOBTZlyM4BY2VwzhT5LNQ
+          BACKLOG_OPTION: "3971d9ed"
+          BUGS_OPTION: "a1efca35"
+          # Indirected through env so untrusted issue/label text never reaches the shell directly.
+          ISSUE_NODE_ID: ${{ github.event.issue.node_id }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          EVENT_ACTION: ${{ github.event.action }}
+          CHANGED_LABEL: ${{ github.event.label.name }}
+          HAS_BUG_LABEL: ${{ contains(github.event.issue.labels.*.name, 'bug') }}
+        run: |
+          set -euo pipefail
+          if [ -z "${GH_TOKEN:-}" ]; then
+            echo "::error::PROJECT_PAT secret is not set; cannot write to the user-owned project." >&2
+            exit 1
+          fi
+
+          # Idempotent: returns the existing item id if the issue is already on the board.
+          item_id=$(gh api graphql -f query='
+            mutation($project: ID!, $content: ID!) {
+              addProjectV2ItemById(input: { projectId: $project, contentId: $content }) {
+                item { id }
+              }
+            }' -F project="$PROJECT_ID" -F content="$ISSUE_NODE_ID" \
+            --jq '.data.addProjectV2ItemById.item.id')
+
+          target=""
+          case "$EVENT_ACTION" in
+            opened|reopened|transferred)
+              if [ "$HAS_BUG_LABEL" = "true" ]; then target="$BUGS_OPTION"; else target="$BACKLOG_OPTION"; fi
+              ;;
+            labeled)
+              if [ "$CHANGED_LABEL" = "bug" ]; then target="$BUGS_OPTION"; fi
+              ;;
+            unlabeled)
+              if [ "$CHANGED_LABEL" = "bug" ]; then target="$BACKLOG_OPTION"; fi
+              ;;
+          esac
+
+          if [ -z "$target" ]; then
+            echo "No status change required (action=$EVENT_ACTION, label=${CHANGED_LABEL:-none})."
+            exit 0
+          fi
+
+          gh api graphql -f query='
+            mutation($project: ID!, $item: ID!, $field: ID!, $opt: String!) {
+              updateProjectV2ItemFieldValue(input: {
+                projectId: $project, itemId: $item, fieldId: $field,
+                value: { singleSelectOptionId: $opt }
+              }) { projectV2Item { id } }
+            }' -F project="$PROJECT_ID" -F item="$item_id" -F field="$STATUS_FIELD_ID" -F opt="$target"
+
+          echo "Routed issue #${ISSUE_NUMBER} to column option ${target}."
