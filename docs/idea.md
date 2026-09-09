@@ -177,7 +177,7 @@ Both clients:
    - Runs an instrumented session, asserts both clients converge
 
 ### Conventions
-- Mock external I/O behind **named fake classes** (per `CLAUDE.md` conventions): `FakeSupabaseClient`, `FakeLocalDataRepository`, `FakeUserNotificationCenter`, etc. No inline lambdas as test doubles.
+- Mock external I/O behind **named fake classes** (per [`AGENTS.md`](../AGENTS.md) § Testing instructions): `FakeSupabaseClient`, `FakeLocalDataRepository`, `FakeUserNotificationCenter`, etc. No inline lambdas as test doubles.
 - Tests run with `./gradlew :composeApp:check` (Kotlin) and `xcodebuild test -scheme macApp` (Swift).
 - New features require tests; bug fixes require a regression test that fails before the fix.
 - Coverage measurement via **JaCoCo** (Android) and **Xcode coverage** (Mac), surfaced in the CI summary. No hard coverage gate — single user, judgment-driven.

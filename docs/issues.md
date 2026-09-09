@@ -116,5 +116,5 @@ Grouped by phase. Each row becomes a single issue created via `gh issue create`.
 80. **Author `docs/security.md`** `[docs]` — done in the bootstrap PR
 81. **Author `docs/ci-cd.md`** `[docs]` — done in the bootstrap PR
 82. **Author `docs/testing.md`** `[docs]` — done in the bootstrap PR
-83. **Update `CLAUDE.md` to reflect new repo structure (post-Pro-removal)** `[docs]`
+83. **Update `AGENTS.md` to reflect new repo structure (post-Pro-removal)** `[docs]` — `CLAUDE.md` is now only a pointer to it.
 84. **Update root `README.md` to reflect the fork's identity** `[docs]`

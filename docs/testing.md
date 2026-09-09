@@ -30,7 +30,7 @@
 
 ## Conventions
 
-- **Named fake classes** per `CLAUDE.md` Conventions § Tests: `FakeSupabaseClient`, `FakeLocalDataRepository`, `FakeUserNotificationCenter`, etc.
+- **Named fake classes** per [`AGENTS.md`](../AGENTS.md) § Testing instructions: `FakeSupabaseClient`, `FakeLocalDataRepository`, `FakeUserNotificationCenter`, etc.
 - **F.I.R.S.T.** — Fast, Independent, Repeatable, Self-validating, Timely.
 - Every new function: a test. Every bug fix: a regression test failing before the fix.
 - No inline lambda doubles; no `mockk` reflection magic.
