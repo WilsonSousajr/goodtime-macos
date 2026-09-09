@@ -126,16 +126,27 @@ Before claiming ready — this is the exact gate CI runs
 ./gradlew :composeApp:check spotlessCheck
 ```
 
-Toolchain-dependent commands, kept separate because they need more than a JDK:
+**On a Mac this gate needs Xcode.app, not just the Command Line Tools.** `check` pulls in
+`:composeApp:linkDebugTestIosSimulatorArm64`, and Kotlin/Native shells out to
+`xcrun xcodebuild -version` to configure the Apple toolchain; without Xcode that call
+exits 72 and the task fails with `MissingXcodeException` long after the Kotlin code has
+compiled cleanly. CI does not hit this because it runs on `ubuntu-latest`, where the
+Apple targets cannot be built at all and `kotlin.native.ignoreDisabledTargets=true`
+([gradle.properties](gradle.properties)) skips them. Until Xcode is installed, the
+closest honest local gate is:
+
+```bash
+./gradlew :composeApp:testDebugUnitTest spotlessCheck   # what CI actually exercises
+```
+
+Say which of the two you ran when you report results.
+
+Apple-toolchain commands, kept separate for the same reason:
 
 ```bash
 ./gradlew :composeApp:iosSimulatorArm64Test      # needs a full Xcode install
 ./gradlew :shared:linkDebugFrameworkMacosArm64   # needs a full Xcode install
 ```
-
-Kotlin/Native links Apple frameworks through the Xcode toolchain: with only the Command
-Line Tools installed, the klibs compile but every framework-link and native-test task
-fails. Install Xcode.app before running those two.
 
 Notes that will otherwise surprise you:
 
