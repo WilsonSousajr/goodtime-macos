@@ -114,10 +114,14 @@ Everyday loop:
 ```bash
 ./gradlew :composeApp:assembleGoogleDebug        # Android APK, google flavor
 ./gradlew :composeApp:assembleFdroidDebug        # Android APK, fdroid flavor
-./gradlew :composeApp:testDebugUnitTest          # fast Android-side unit tests
-./gradlew :composeApp:testDebugUnitTest --tests "com.apps.adrcotfas.goodtime.bl.TimerManagerTest"
+./gradlew :composeApp:testGoogleDebugUnitTest    # fast Android-side unit tests
+./gradlew :composeApp:testGoogleDebugUnitTest --tests "com.apps.adrcotfas.goodtime.bl.TimerManagerTest"
 ./gradlew spotlessApply                          # fix formatting
 ```
+
+The two product flavors mean there is **no** plain `testDebugUnitTest` task — Gradle
+rejects it as ambiguous between `testGoogleDebugUnitTest` and `testFdroidDebugUnitTest`.
+Name the flavor.
 
 Before claiming ready — this is the exact gate CI runs
 ([.github/workflows/ci-kmp.yml](.github/workflows/ci-kmp.yml)):
@@ -136,7 +140,7 @@ Apple targets cannot be built at all and `kotlin.native.ignoreDisabledTargets=tr
 closest honest local gate is:
 
 ```bash
-./gradlew :composeApp:testDebugUnitTest spotlessCheck   # what CI actually exercises
+./gradlew :composeApp:testGoogleDebugUnitTest spotlessCheck   # what CI actually exercises
 ```
 
 Say which of the two you ran when you report results.
